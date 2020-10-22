@@ -23,7 +23,7 @@ const generateGrid = (random) => {
       rows.push(Array.from(Array(numCols), () => 0));
     } else {
       rows.push(
-        Array.from(Array(numCols), () => (Math.random() > 0.7 ? 1 : 0))
+        Array.from(Array(numCols), () => (Math.random() > 0.8 ? 1 : 0))
       );
     }
   }
@@ -36,9 +36,12 @@ function App() {
   });
 
   const [running, setRunning] = useState(false);
-
   const runningRef = useRef(running);
   runningRef.current = running;
+
+  const [loop, setLoop] = useState(false);
+  const loopRef = useRef(loop);
+  loopRef.current = loop;
 
   const runSimulation = useCallback(() => {
     if (!runningRef.current) {
@@ -52,10 +55,12 @@ function App() {
             operations.forEach(([x, y]) => {
               let newI = i + x;
               let newJ = j + y;
-              // if (newI < 0) newI += numRows;
-              // if (newI >= numRows) newI -= numRows;
-              // if (newJ < 0) newJ += numCols;
-              // if (newJ >= numCols) newJ -= numCols;
+              if (loopRef.current) {
+                if (newI < 0) newI += numRows;
+                if (newI >= numRows) newI -= numRows;
+                if (newJ < 0) newJ += numCols;
+                if (newJ >= numCols) newJ -= numCols;
+              }
               if (newI >= 0 && newI < numRows && newJ >= 0 && newJ < numCols) {
                 neighbors += g[newI][newJ];
               }
@@ -86,7 +91,7 @@ function App() {
           }}
         >
           {" "}
-          {running ? "stop simulation" : "start simulation"}
+          {running ? "Stop Simulation" : "Start Simulation"}
         </button>
         <button
           onClick={() => {
@@ -95,7 +100,13 @@ function App() {
         >
           Random Board
         </button>
-        <button>Loop Board</button>
+        <button
+          onClick={() => {
+            setLoop(!loop);
+          }}
+        >
+          {loop ? "Static Board" : "Loop Board"}
+        </button>
         <button
           onClick={() => {
             setGrid(generateGrid(false));

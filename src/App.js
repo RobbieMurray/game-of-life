@@ -1,5 +1,6 @@
 import produce from "immer";
 import React, { useCallback, useRef, useState } from "react";
+import "./App.css";
 
 const numRows = 50;
 const numCols = 50;
@@ -13,16 +14,25 @@ const operations = [
   [-1, -1],
   [1, 0],
   [-1, 0],
-]
+];
 
+const generateGrid = (random) => {
+  const rows = [];
+  for (let i = 0; i < numRows; i++) {
+    if (!random) {
+      rows.push(Array.from(Array(numCols), () => 0));
+    } else {
+      rows.push(
+        Array.from(Array(numCols), () => (Math.random() > 0.7 ? 1 : 0))
+      );
+    }
+  }
+  return rows;
+};
 
 function App() {
   const [grid, setGrid] = useState(() => {
-    const rows = [];
-    for (let i = 0; i < numRows; i++) {
-      rows.push(Array.from(Array(numCols), () => 0));
-    }
-    return rows;
+    return generateGrid(false);
   });
 
   const [running, setRunning] = useState(false);
@@ -30,51 +40,72 @@ function App() {
   const runningRef = useRef(running);
   runningRef.current = running;
 
-
   const runSimulation = useCallback(() => {
     if (!runningRef.current) {
       return;
     }
-    setGrid((g) =>{
-      return produce(g, gridCopy => {
-        for (let i = 0; i < numRows; i++){
-          for (let j = 0; j < numCols; j++){
+    setGrid((g) => {
+      return produce(g, (gridCopy) => {
+        for (let i = 0; i < numRows; i++) {
+          for (let j = 0; j < numCols; j++) {
             let neighbors = 0;
-            operations.forEach(([x,y]) => {
-              let newI = i+x;
-              let newJ = j+y;
-              if (newI < 0) newI += numRows;
-              if (newI >= numRows) newI -= numRows;
-              if (newJ < 0) newJ += numCols;
-              if (newJ >= numCols) newJ -= numCols;
-              if (newI >= 0 && newI < numRows && newJ >= 0 && newJ < numCols){
-                neighbors += g[newI][newJ]
+            operations.forEach(([x, y]) => {
+              let newI = i + x;
+              let newJ = j + y;
+              // if (newI < 0) newI += numRows;
+              // if (newI >= numRows) newI -= numRows;
+              // if (newJ < 0) newJ += numCols;
+              // if (newJ >= numCols) newJ -= numCols;
+              if (newI >= 0 && newI < numRows && newJ >= 0 && newJ < numCols) {
+                neighbors += g[newI][newJ];
               }
-            })
+            });
 
-            if (neighbors < 2 || neighbors > 3){
+            if (neighbors < 2 || neighbors > 3) {
               gridCopy[i][j] = 0;
-            } else if (g[i][j] === 0 && neighbors === 3){
+            } else if (g[i][j] === 0 && neighbors === 3) {
               gridCopy[i][j] = 1;
             }
-          
           }
         }
-      })
-    })
+      });
+    });
     setTimeout(runSimulation, 100);
   }, []);
 
   return (
-    <div style={{margin: "20px"}}>
-      <button onClick={() => {
-        setRunning(!running);
-        if (!running){
-          runningRef.current = true;
-          runSimulation();
-        }
-      }}> {running ? "stop simulation" : "start simulation"}</button>
+    <div className="body">
+      <div className="controls">
+        <button
+          onClick={() => {
+            setRunning(!running);
+            if (!running) {
+              runningRef.current = true;
+              runSimulation();
+            }
+          }}
+        >
+          {" "}
+          {running ? "stop simulation" : "start simulation"}
+        </button>
+        <button
+          onClick={() => {
+            setGrid(generateGrid(true));
+          }}
+        >
+          Random Board
+        </button>
+        <button>Loop Board</button>
+        <button
+          onClick={() => {
+            setGrid(generateGrid(false));
+          }}
+        >
+          Clear Board
+        </button>
+      </div>
       <div
+        className="grid"
         style={{
           display: "grid",
           gridTemplateColumns: `repeat(${numCols}, 20px)`,
@@ -83,6 +114,7 @@ function App() {
         {grid.map((rows, i) =>
           rows.map((col, j) => (
             <div
+              className="box"
               key={`${i}-${j}`}
               onClick={() => {
                 const newGrid = produce(grid, (gridCopy) => {
@@ -102,6 +134,6 @@ function App() {
       </div>
     </div>
   );
-};
+}
 
 export default App;

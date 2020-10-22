@@ -1,0 +1,21 @@
+.body{
+    display: flex;
+    margin: 20px;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.controls{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: flex-end;
+    
+}
+
+.grid{
+    display:grid;
+    padding-top: 20px;
+    
+}

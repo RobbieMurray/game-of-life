@@ -6,16 +6,30 @@
     flex-direction: column;
 }
 
+button{
+    margin: 20px;
+    padding: 0.2em;
+}
+
 .controls{
     display: flex;
     flex-direction: row;
     justify-content: flex-end;
     align-items: flex-end;
-    
+}
+
+.controls h1{
+    padding: 0;
 }
 
 .grid{
     display:grid;
     padding-top: 20px;
     
+}
+
+.lifebox{
+    width: 20;
+    height: 20;
+    border: "solid 1px black";
 }

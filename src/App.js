@@ -80,6 +80,7 @@ function App() {
 
   return (
     <div className="body">
+      <h1>Conway's Game of Life</h1>
       <div className="controls">
         <button
           onClick={() => {
@@ -136,8 +137,8 @@ function App() {
               style={{
                 width: 20,
                 height: 20,
-                backgroundColor: grid[i][j] ? "black" : undefined,
                 border: "solid 1px black",
+                backgroundColor: grid[i][j] ? "black" : undefined,
               }}
             />
           ))
